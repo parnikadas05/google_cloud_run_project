@@ -1,0 +1,23 @@
+steps:
+  - name: 'gcr.io/cloud-builders/mvn'
+    args: ['package', '-DskipTests']
+
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['build', '-t', 'gcr.io/YOUR_PROJECT_ID/YOUR_SERVICE_NAME', '.']
+
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', 'gcr.io/YOUR_PROJECT_ID/YOUR_SERVICE_NAME']
+
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: gcloud
+    args:
+      [
+        'run', 'deploy', 'YOUR_SERVICE_NAME',
+        '--image', 'gcr.io/YOUR_PROJECT_ID/YOUR_SERVICE_NAME',
+        '--region', 'asia-south1',
+        '--platform', 'managed',
+        '--allow-unauthenticated'
+      ]
+
+images:
+  - gcr.io/YOUR_PROJECT_ID/YOUR_SERVICE_NAME
